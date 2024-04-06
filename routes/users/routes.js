@@ -22,10 +22,10 @@ router.get('/:id', async (req, res) => {
 });
 router.put('/:id', async (req, res) => {
     const userId = req.params.id; // Extract user ID from request parameters
-    const { age } = req.body; // Extract age from request body
+    const { name, age } = req.body; // Extract name and age from request body
 
     try {
-        const user = await User.findByIdAndUpdate(userId, { age }, { new: true }); // Update user's age
+        const user = await User.findByIdAndUpdate(userId, { name, age }, { new: true }); // Update user's name and age
         if (!user) {
             return res.status(404).json(new GenerateResponse(false, "User not found")); // If user not found, return 404
         }
@@ -35,6 +35,7 @@ router.put('/:id', async (req, res) => {
         res.status(500).json(new GenerateResponse(false, error.message)); // Handle server error
     }
 });
+
 // HTTP post method to add a new user, this function would get invoked at /users/ API call
 router.post('/', async (req, res) => {
     const userObj = req.body;
