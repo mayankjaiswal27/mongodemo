@@ -9,7 +9,32 @@ router.get('/', async (req, res) => {
     const users = await getUsers();
     res.json(new GenerateResponse(true, undefined, users));
 });
+router.get('/:id', async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id);
+        if (!user) {
+            return res.status(404).json(new GenerateResponse(false, "User not found"));
+        }
+        res.json(new GenerateResponse(true, undefined, user));
+    } catch (error) {
+        res.status(500).json(new GenerateResponse(false, error.message));
+    }
+});
+router.put('/:id', async (req, res) => {
+    const userId = req.params.id; // Extract user ID from request parameters
+    const { age } = req.body; // Extract age from request body
 
+    try {
+        const user = await User.findByIdAndUpdate(userId, { age }, { new: true }); // Update user's age
+        if (!user) {
+            return res.status(404).json(new GenerateResponse(false, "User not found")); // If user not found, return 404
+        }
+        const users = await getUsers(); // Get updated list of users
+        res.json(new GenerateResponse(true, undefined, users)); // Return updated list of users
+    } catch (error) {
+        res.status(500).json(new GenerateResponse(false, error.message)); // Handle server error
+    }
+});
 // HTTP post method to add a new user, this function would get invoked at /users/ API call
 router.post('/', async (req, res) => {
     const userObj = req.body;
